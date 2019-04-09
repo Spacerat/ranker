@@ -25,7 +25,7 @@ class Ranker(PClass):
 
         slf = self
 
-        if slf.has_item(smaller) and slf.has_item(larger) and slf.cmp_items(smaller, larger) > 0:
+        if slf.cmp_items(smaller, larger) > 0:
             raise ValueError(f"{smaller} is already greater than {larger}")
 
         if key not in slf._remaining_pairs:
@@ -35,8 +35,6 @@ class Ranker(PClass):
         slf = slf.set(_remaining_pairs=slf._remaining_pairs.remove(key))
         if larger not in slf._greater_than:
             slf = slf.set(_greater_than=slf._greater_than.set(larger, pset()))
-        if smaller not in slf._greater_than:
-            slf = slf.set(_greater_than=slf._greater_than.set(smaller, pset()))
 
         slf = slf.set(
             _greater_than=slf._greater_than.set(larger, slf._greater_than[larger].add(smaller)),
@@ -71,12 +69,13 @@ class Ranker(PClass):
         return cmp_to_key(self.cmp_items)
 
     def cmp_items(self, a, b):
-        if not self.has_item(a):
-            raise KeyError(f"Item {a} not found")
-        if not self.has_item(b):
-            raise KeyError(f"Item {b} not found")
-        a_greater_than_b = b in self._greater_than[a]
-        return 1 if a_greater_than_b else -1
+        if b in self._greater_than.get(a, {}):
+            return 1
+
+        if a in self._greater_than.get(b, {}):
+            return -1
+
+        return 0
 
 
 class Undo(Exception):
