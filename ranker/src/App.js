@@ -7,7 +7,7 @@ import './App.css';
 
 class App extends Component<{}> {
   render() {
-    let ranking: Ranker<string> = Ranker.make(["icecream", "pizza", "gum"]);
+    let ranking: Ranker = Ranker.make(["icecream", "pizza", "gum"]);
     ranking = ranking.add_ranking("pizza", "gum")
     ranking = ranking.add_ranking("icecream", "pizza")
     console.log(ranking.toJS());

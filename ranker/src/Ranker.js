@@ -2,25 +2,26 @@
 
 const { Record, Map, Set } = require('immutable');
 
-type SetsMap<T> = Map<T, Set<T>>;
-type SetSet<T> = Set<Set<T>>;
+type StringSet = Set<string>;
+type SetsMap = Map<string, StringSet>;
+type SetSet = Set<StringSet>;
 
 
-type RankerProps<T> = {
-    greater_than: SetsMap<T>,
-    remaining_pairs: SetSet<T>,
-    all_items: Set<T>
+type RankerProps = {
+    greater_than: SetsMap,
+    remaining_pairs: SetSet,
+    all_items: StringSet
 };
-const defaultValues: RankerProps<void> = {
+const defaultValues: RankerProps = {
     greater_than: Map({}),
     remaining_pairs: Set([]),
     all_items: Set([])
 }
 const RankerRecord = Record(defaultValues);
 
-class Ranker<T> extends RankerRecord<RankerProps<T>> {
-    static make(items: Array<T>): Ranker<T> {
-        let remaining: SetSet<T> = Set([])
+class Ranker extends RankerRecord<RankerProps> {
+    static make(items: Array<string>): Ranker {
+        let remaining: SetSet = Set([])
         for (let a of items) {
             for (let b of items) {
                 if (a !== b) {
@@ -35,9 +36,9 @@ class Ranker<T> extends RankerRecord<RankerProps<T>> {
         return this.get('remaining_pairs').size === 0
     }
 
-    add_ranking(larger: any, smaller: T): Ranker<T> {
-        const key: Set<T> = Set([larger, smaller]);
-        let self: Ranker<T> = this;
+    add_ranking(larger: any, smaller: string): Ranker {
+        const key: StringSet = Set([larger, smaller]);
+        let self: Ranker = this;
 
         if (!self.get('remaining_pairs').includes(key)) {
             return self;
@@ -47,7 +48,6 @@ class Ranker<T> extends RankerRecord<RankerProps<T>> {
         if (self.compare(smaller, larger) > 0) {
             throw new Error(`smaller is already greater than larger`);
         }
-
 
         self = self.removeIn(['remaining_pairs', key])
 
@@ -66,18 +66,18 @@ class Ranker<T> extends RankerRecord<RankerProps<T>> {
         return self;
     }
 
-    everything_less_than(item: T): Set<T> {
+    everything_less_than(item: string): StringSet {
         return this.getIn(['greater_than', item], Set())
     }
 
-    sample(): ?[T, T] {
+    sample(): ?[string, string] {
         for (let item of this.get('remaining_pairs').values()) {
-            const result = item.toJS().sort();
-            return ((result: any): [T, T])
+            const result = item.toArray()
+            return [result[0], result[1]]
         }
     }
 
-    compare(a: T, b: T): number {
+    compare(a: string, b: string): number {
         // Return 1 if a > b, 0 if a == b, -1 if a < b
         const greater_than = this.get('greater_than');
         if (greater_than.get(a, Set()).includes(b)) {
