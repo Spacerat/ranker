@@ -19,13 +19,17 @@ const defaultValues: RankerProps = {
 }
 const RankerRecord = Record(defaultValues);
 
+function pair(a, b): Set<string> {
+    return Set([a, b])
+}
+
 class Ranker extends RankerRecord<RankerProps> {
     static make(items: Array<string>): Ranker {
         let remaining: SetSet = Set([])
         for (let a of items) {
             for (let b of items) {
                 if (a !== b) {
-                    remaining = remaining.add(Set([a, b]))
+                    remaining = remaining.add(pair(a, b))
                 }
             }
         }
@@ -37,7 +41,7 @@ class Ranker extends RankerRecord<RankerProps> {
     }
 
     add_ranking(larger: any, smaller: string): Ranker {
-        const key: StringSet = Set([larger, smaller]);
+        const key: StringSet = pair(larger, smaller);
         let self: Ranker = this;
 
         if (!self.get('remaining_pairs').includes(key)) {
