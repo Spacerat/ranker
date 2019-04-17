@@ -1,15 +1,33 @@
 // @flow
 
+const { Record, Map, Set } = require('immutable');
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import Ranker from './Ranker'
+import type Pair from './Ranker'
 
-class App extends Component<{}> {
+type State = {
+    items: Set<string>,
+    ranker: Ranker,
+    sample: ?Pair,
+    prevState: ?State
+}
+
+type Props = {}
+
+class App extends Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            ranker: Ranker.make([]),
+            items: Set([]),
+            sample: null,
+            prevState: null
+        }
+    }
+
     render() {
-        let ranking: Ranker = Ranker.make(["icecream", "pizza", "gum"]);
-        ranking = ranking.add_ranking("pizza", "gum")
-        ranking = ranking.add_ranking("icecream", "pizza")
-
         return (
             <div>
                 <header>
