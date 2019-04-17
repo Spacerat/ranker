@@ -1,6 +1,6 @@
 // @flow
 
-const { Record, Map, Set, Seq } = require('immutable');
+const { Record, Map, Set } = require('immutable');
 
 type StringSet = Set<string>;
 type SetsMap = Map<string, StringSet>;

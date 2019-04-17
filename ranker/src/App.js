@@ -1,8 +1,7 @@
 // @flow
 
-const { Record, Map, Set } = require('immutable');
+import { Set } from 'immutable';
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import Ranker from './Ranker'
 import type Pair from './Ranker'
 
