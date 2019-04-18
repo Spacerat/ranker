@@ -14,7 +14,7 @@ type Props = {}
 class App extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = { state: new AppState().set_items(), itemspec: "" }
+        this.state = { state: new AppState().set_items(), itemspec: "" } // TODO: replace itemspec with OrderedSet in AppState
     }
 
     render() {
