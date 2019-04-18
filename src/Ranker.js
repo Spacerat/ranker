@@ -43,31 +43,33 @@ class Ranker extends RankerRecord<RankerProps> {
     }
 
     set_items(items: ?Iterable<string>): Ranker {
-        const item_set = !items ? Set([]) : Set(items)
-
         let self = this;
+        const item_set = !items ? Set([]) : Set(items)
         const all_items = this.get("all_items");
 
+        // Figure out which items to add/remove and which are unchanged
         const to_remove = all_items.subtract(item_set);
         const to_add = item_set.subtract(all_items);
         const overlap = item_set.intersect(all_items);
 
         let remaining_pairs = self.get("remaining_pairs")
 
-        for (let a of overlap) {
-            for (let b of to_add) {
-                remaining_pairs = remaining_pairs.add(pair(a, b))
-            }
-        }
+        // Add missing pairs, remove pairs which are now invalid
+        remaining_pairs = remaining_pairs.union(combinations(overlap.union(to_add)));
         remaining_pairs = remaining_pairs.filter(val => val.intersect(to_remove).size === 0)
 
+        // Remove any relationships contianing removed items
         const greater_than = self.get("greater_than").deleteAll(to_remove).map(val => val.subtract(to_remove))
 
-        self = self.set("greater_than", greater_than);
-        self = self.set("remaining_pairs", remaining_pairs)
-        self = self.set("all_items", item_set)
+        return self.merge({
+            "greater_than": greater_than,
+            "remaining_pairs": remaining_pairs,
+            "all_items": item_set
+        });
+    }
 
-        return self
+    num_remaining_items(): number {
+        return this.get('remaining_pairs').size
     }
 
     is_complete(): bool {
