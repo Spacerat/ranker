@@ -1,7 +1,6 @@
 // @flow
 
-const { Set, Range } = require('immutable');
-
+import { Set, Range } from 'immutable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Ranker from './Ranker';
