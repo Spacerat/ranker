@@ -38,6 +38,9 @@ class App extends Component<Props, State> {
                 <div>
                     {!sample ? null : sample.map((item, idx) => <Choice key={idx} name={item} onClick={() => this.choose(idx)} />)}
                 </div>
+                <div>
+                    <button onClick={() => this.setState({ state: this.state.state.undo() })}> Undo</button>
+                </div>
             </div>
         );
     }
