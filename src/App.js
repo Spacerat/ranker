@@ -18,7 +18,7 @@ class App extends Component<Props, State> {
     }
 
     render() {
-        console.log(this.state)
+        console.log(this.state.state.toJS())
         const state = this.state.state;
         const sample = state.get_sample();
         return (
