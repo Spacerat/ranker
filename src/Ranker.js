@@ -126,9 +126,22 @@ class Ranker extends RankerRecord<RankerProps> {
     }
 
     sample(): ?Pair {
+        let lowest: ?StringSet = null;
+        let lowest_size = Infinity;
+
         for (let item of this.get('remaining_pairs').values()) {
-            const result = item.toArray()
-            return [result[0], result[1]]
+            const pair = item.toArray();
+            const size1 = this.add_ranking(pair[0], pair[1]).num_remaining_items()
+            const size2 = this.add_ranking(pair[1], pair[0]).num_remaining_items()
+            const expected_size = (size1 + size2 / 2.0);
+            if (expected_size < lowest_size) {
+                lowest = item;
+                lowest_size = expected_size;
+            }
+        }
+        if (!!lowest) {
+            const pair = lowest.toArray();
+            return [pair[0], pair[1]];
         }
     }
 
