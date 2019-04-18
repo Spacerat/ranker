@@ -1,3 +1,5 @@
+// @flow
+
 const { Set, Range } = require('immutable');
 
 import React from 'react';
