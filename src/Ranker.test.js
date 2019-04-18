@@ -45,8 +45,11 @@ it('accepts random rankings when sampled', () => {
     let r = Ranker.make(Range(0, 10).map(v => v.toString()));
     while (!r.is_complete()) {
         const sample = r.sample();
-        const choice = Math.round(Math.random());
-        r = r.add_ranking(sample[choice], sample[1 - choice])
+        expect(sample).not.toBeNull()
+        if (sample != null) {
+            const choice = Math.round(Math.random());
+            r = r.add_ranking(sample[choice], sample[1 - choice])
+        }
     }
 });
 
