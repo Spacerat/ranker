@@ -1,14 +1,14 @@
 // @flow
 
 import { Record, Set } from 'immutable';
-import Ranker from './Ranker'
-import type { Pair } from './Ranker'
+import Ranker from './Ranker';
+import { Pair } from './Ranker';
 
 /* eslint-disable no-use-before-define */
 type AppStateProps = {
-    sample: ?Pair,
+    sample: Pair | null,
     ranker: Ranker,
-    prev_state: ?AppState,
+    prev_state: AppState | null,
 };
 /* eslint-enable no-use-before-define */
 
@@ -17,22 +17,22 @@ const defaultValues: AppStateProps = {
     sample: null,
     prev_state: null
 }
-const AppStateRecord = Record(defaultValues);
 
-class AppState extends AppStateRecord<AppStateProps> {
+class AppState extends Record(defaultValues) {
     /* AppState is basically a wrapper around Ranker which manages a sample */
-    set_items(items: ?Iterable<string>): AppState {
+    set_items(items?: Iterable<string>): AppState {
         let self = this;
         self = self.update('ranker', ranker => ranker.set_items(items));
         return self.update_sample();
     }
 
-    get_sample(): ?Pair {
+    get_sample(): Pair | null {
         return this.get('sample')
     }
 
     get_items(): Array<string> {
-        return this.getIn(['ranker', 'all_items'], Set()).toArray()
+        const result = this.getIn(['ranker', 'all_items'])
+        return (result ? result.toArray() : []);
     }
 
     choose(idx: number): AppState {

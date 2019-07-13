@@ -18,9 +18,8 @@ const defaultValues: RankerProps = {
     remaining_pairs: Set([]),
     all_items: Set([])
 }
-const RankerRecord = Record(defaultValues);
 
-function pair(a, b): StringSet {
+function pair(a: string, b: string): StringSet {
     return Set([a, b])
 }
 
@@ -36,13 +35,13 @@ function combinations(items: Iterable<string>) {
     return combinations
 }
 
-class Ranker extends RankerRecord<RankerProps> {
-    static make(items: ?Iterable<string>): Ranker {
+class Ranker extends Record(defaultValues) {
+    static make(items?: Iterable<string>): Ranker {
         items = !items ? Set([]) : items
         return new Ranker({ remaining_pairs: combinations(items), all_items: Set(items) })
     }
 
-    set_items(items: ?Iterable<string>): Ranker {
+    set_items(items?: Iterable<string>): Ranker {
         let self = this;
         const item_set = !items ? Set([]) : Set(items)
         const all_items = this.get("all_items");
@@ -72,7 +71,7 @@ class Ranker extends RankerRecord<RankerProps> {
         return this.get('remaining_pairs').size
     }
 
-    is_complete(): bool {
+    is_complete(): boolean {
         return this.get('remaining_pairs').size === 0
     }
 
@@ -118,15 +117,16 @@ class Ranker extends RankerRecord<RankerProps> {
     }
 
     everything_less_than(item: string): StringSet {
-        return this.getIn(['greater_than', item], Set())
+        const result = this.getIn(['greater_than', item])
+        return result ? result : Set();
     }
 
     everything_greater_than(item: string): StringSet {
         return Set(this.get("greater_than").filter((v) => v.has(item)).keys());
     }
 
-    sample(): ?Pair {
-        let lowest: ?StringSet = null;
+    sample(): Pair | null  {
+        let lowest: StringSet | null  = null;
         let lowest_size = Infinity;
 
         for (let item of this.get('remaining_pairs').values()) {
@@ -143,6 +143,7 @@ class Ranker extends RankerRecord<RankerProps> {
             const pair = lowest.toArray();
             return [pair[0], pair[1]];
         }
+        return null;
     }
 
     compare(a: string, b: string): number {
