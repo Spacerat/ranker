@@ -4,7 +4,11 @@ type Props = { name: string; onClick: () => void };
 
 class Choice extends PureComponent<Props> {
   render() {
-    return <button onClick={this.props.onClick}>{this.props.name}</button>;
+    return (
+      <button className="choice" onClick={this.props.onClick}>
+        {this.props.name}
+      </button>
+    );
   }
 }
 

@@ -8,7 +8,61 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #eee;
+}
+
+.main {
+  background-color: white;
+  padding-left: 32px;
+  padding-right: 32px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+}
+
+textarea {
+  width: 100%;
+}
+
+.questionBox {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+button {
+  padding: 8px;
+  border-radius: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #111;
+    color: #ddd;
+  }
+
+  .main {
+    background-color: #222;
+  }
+
+  textarea {
+    width: 100%;
+    color: #ddd;
+    background-color: #111;
+  }
 }

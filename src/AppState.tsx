@@ -60,8 +60,6 @@ class AppState extends Record(defaultValues) {
     let self: AppState = this;
     const ranker = self.get("ranker");
 
-    console.log(ranker.num_remaining_items());
-    console.log(ranker.get("remaining_pairs").toJS());
     // If there's not enough items, clear the sample.
     if (ranker.num_remaining_items() < 1) {
       return self.set("sample", null);
