@@ -17,6 +17,11 @@ class App extends Component<Props, State> {
     const sample = state.get_sample();
     const showFinalSteps = sample || state.get_sorted_items().length > 0;
 
+    const numItems = this.state.state.ranker.all_items.size;
+    const numCombinations = (numItems * (numItems - 1)) / 2;
+    const numRemaining = this.state.state.ranker.num_remaining_items();
+    const numCompleted = numCombinations - numRemaining;
+
     return (
       <div className="main">
         <h1>Ranker!</h1>
@@ -64,6 +69,14 @@ class App extends Component<Props, State> {
                 </div>
               )}
             </div>
+
+            {numCombinations > 1 ? (
+              numRemaining > 0 ? (
+                <div>Up to {numRemaining} pairs remaining.</div>
+              ) : (
+                <div>Done!</div>
+              )
+            ) : null}
           </>
         ) : null}
 
@@ -73,9 +86,12 @@ class App extends Component<Props, State> {
             <div>
               <p>Greatest...</p>
               <ol>
-                {state.get_sorted_items().map((item) => (
-                  <li key={item}>{item} </li>
-                ))}
+                {state
+                  .get_sorted_items()
+                  .reverse()
+                  .map((item) => (
+                    <li key={item}>{item} </li>
+                  ))}
               </ol>
               <p>...Least great</p>
             </div>

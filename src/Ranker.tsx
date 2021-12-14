@@ -32,6 +32,10 @@ function combinations(items: Iterable<string>) {
   return combinations;
 }
 
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 class Ranker extends Record(defaultValues) {
   static make(items?: Iterable<string>): Ranker {
     items = !items ? Set([]) : items;
@@ -61,7 +65,7 @@ class Ranker extends Record(defaultValues) {
       (val) => val.intersect(to_remove).size === 0
     );
 
-    // Remove any relationships contianing removed items
+    // Remove any relationships containing removed items
     const greater_than = self
       .get("greater_than")
       .deleteAll(to_remove)
@@ -135,22 +139,26 @@ class Ranker extends Record(defaultValues) {
   }
 
   sample(): Pair | null {
-    let lowest: StringSet | null = null;
+    let lowests: StringSet[] = [];
     let lowest_size = Infinity;
-
+    console.log(`sampling`);
     for (let item of this.get("remaining_pairs").values()) {
       const pair = item.toArray();
       const size1 = this.add_ranking(pair[0], pair[1]).num_remaining_items();
       const size2 = this.add_ranking(pair[1], pair[0]).num_remaining_items();
-      const expected_size = size1 + size2 / 2.0;
 
-      if (expected_size < lowest_size) {
-        lowest = item;
-        lowest_size = expected_size;
+      const min_size = Math.max(size1, size2);
+
+      if (min_size === lowest_size) {
+        lowests.push(item);
+      }
+      if (min_size < lowest_size) {
+        lowests = [item];
+        lowest_size = min_size;
       }
     }
-    if (!!lowest) {
-      const pair = lowest.toArray();
+    if (lowests.length > 0) {
+      const pair = lowests[lowests.length - 1].toArray();
       return [pair[0], pair[1]];
     }
     return null;
