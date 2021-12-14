@@ -1,4 +1,4 @@
-import { Record, Map, Set } from "immutable";
+import { Record as IRecord, Map, Set } from "immutable";
 
 type StringSet = Set<string>;
 type SetsMap = Map<string, StringSet>;
@@ -36,7 +36,7 @@ function getRandomInt(max: number) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-class Ranker extends Record(defaultValues) {
+class Ranker extends IRecord(defaultValues) {
   static make(items?: Iterable<string>): Ranker {
     items = !items ? Set([]) : items;
     return new Ranker({
@@ -139,15 +139,33 @@ class Ranker extends Record(defaultValues) {
   }
 
   sample(): Pair | null {
+    // TODO!!!!!!
+    // Why did I try coming up with some fancy nonstandard algorithm for this?
+    // This is literally a sorting problem, except there's also the "fun" dimension.
+    // I should probably just use MergeSort (probably more fun than Quicksort)
     let lowests: StringSet[] = [];
     let lowest_size = Infinity;
-    console.log(`sampling`);
+
+    const relationshipCounts: Record<string, number> = {};
+
     for (let item of this.get("remaining_pairs").values()) {
       const pair = item.toArray();
-      const size1 = this.add_ranking(pair[0], pair[1]).num_remaining_items();
-      const size2 = this.add_ranking(pair[1], pair[0]).num_remaining_items();
 
-      const min_size = Math.max(size1, size2);
+      const relationshipCount1 =
+        pair[0] in relationshipCounts
+          ? relationshipCounts[pair[0]]
+          : this.everything_greater_than(pair[0]).size +
+            this.everything_less_than(pair[0]).size;
+      const relationshipCount2 =
+        pair[1] in relationshipCounts
+          ? relationshipCounts[pair[1]]
+          : this.everything_greater_than(pair[1]).size +
+            this.everything_less_than(pair[1]).size;
+
+      relationshipCounts[pair[0]] = relationshipCount1;
+      relationshipCounts[pair[1]] = relationshipCount2;
+
+      const min_size = relationshipCount1 + relationshipCount2;
 
       if (min_size === lowest_size) {
         lowests.push(item);
